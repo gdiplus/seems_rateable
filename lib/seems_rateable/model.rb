@@ -79,10 +79,9 @@ module SeemsRateable
 
   module ClassMethods
    def seems_rateable(opts={})               
-	 #has_many :rates_without_dimension, -> { where(dimension: nil) }, :as => :rateable, :class_name => SeemsRateable::Rate, :dependent => :destroy			  
-	 has_many :rates_without_dimension, :conditions => { dimension: nil }, :as => :rateable, :class_name => SeemsRateable::Rate, :dependent => :destroy			  
+	 has_many :rates_without_dimension, -> { where(dimension: nil) }, :as => :rateable, :class_name => SeemsRateable::Rate, :dependent => :destroy			  
 	 has_many :raters_without_dimension, :through => :rates_without_dimension, :source => :rater 
-	 has_one :rate_average_without_dimension, :conditions => { dimension: nil }, :as => :cacheable, :class_name => SeemsRateable::CachedRating, :dependent => :destroy
+	 has_one :rate_average_without_dimension, -> { where(dimension: nil) }, :as => :cacheable, :class_name => SeemsRateable::CachedRating, :dependent => :destroy
 	  	  
 	 @permission = opts[:allow_update] ? true : false		 
 	  	 
@@ -96,9 +95,9 @@ module SeemsRateable
 	  	  
 	 if opts[:dimensions].is_a?(Array)
 	  opts[:dimensions].each do |dimension|        
-	   has_many :"#{dimension}_rates", :conditions => { dimension: dimension.to_s }, :dependent => :destroy, :class_name => SeemsRateable::Rate, :as => :rateable
+	   has_many :"#{dimension}_rates", -> { where dimension: dimension.to_s }, :dependent => :destroy, :class_name => SeemsRateable::Rate, :as => :rateable
 	   has_many :"#{dimension}_raters", :through => :"#{dimension}_rates", :source => :rater         
-	   has_one :"#{dimension}_average", :conditions => { dimension: dimension.to_s }, :as => :cacheable, :class_name => SeemsRateable::CachedRating, :dependent => :destroy
+	   has_one :"#{dimension}_average", -> { where dimension: dimension.to_s }, :as => :cacheable, :class_name => SeemsRateable::CachedRating, :dependent => :destroy
 	  end
 	 end	 	 					
    end
